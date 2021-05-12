@@ -11,9 +11,14 @@
 #define NUM_STRIP_LEDS 20
 #define STRIP_DATA_PIN 7
 
+// Strip 2 light info
+#define NUM_STRIP2_LEDS 20
+#define STRIP2_DATA_PIN 8
+
 // Current colors of lights
 CRGB ringLeds[NUM_RING_LEDS];
 CRGB stripLeds[NUM_STRIP_LEDS];
+CRGB strip2Leds[NUM_STRIP_LEDS];
 
 void setup() {
   Serial.begin(9600);
@@ -22,6 +27,7 @@ void setup() {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, 2000); // Set max amps to 2 amps (2000 milliamps) at 5 volts
   FastLED.addLeds<NEOPIXEL, RING_DATA_PIN>(ringLeds, NUM_RING_LEDS);
   FastLED.addLeds<NEOPIXEL, STRIP_DATA_PIN>(stripLeds, NUM_STRIP_LEDS);
+  FastLED.addLeds<NEOPIXEL, STRIP2_DATA_PIN>(strip2Leds, NUM_STRIP2_LEDS);
   FastLED.clear();
   FastLED.show();
 
@@ -31,6 +37,9 @@ void setup() {
   }
   for (int i = 0; i < NUM_STRIP_LEDS; i++) {
     stripLeds[i] = CRGB::White;
+  }
+  for (int i = 0; i < NUM_STRIP2_LEDS; i++) {
+    strip2Leds[i] = CRGB::White;
   }
   
   FastLED.show();
@@ -45,6 +54,7 @@ void loop()
  * Available commands: 
  *  r<num LEDs> <hue>
  *  s<num LEDs> <hue>
+ *  S<num LEDs> <hue>
  * 
  * Replace <num LEDs> with the number of LEDs to light up
  * Replace <hue> with the color of the lights, where 0 or 255 is red, 85 is green, 170 is blue
@@ -103,6 +113,28 @@ void serialEvent() {
       // The rest of the LEDs should be black
       for (; i < NUM_STRIP_LEDS; i++) {
         stripLeds[i] = CRGB::Black;
+      }
+      FastLED.show();
+    } else if (cmdChar == 'S') {
+      // Strip 2 light update command
+      
+      // Read the number of LEDs to light up
+      int numLeds = Serial.parseInt();
+      
+      // Read the separator character
+      Serial.read();
+      int hue = Serial.parseInt();
+
+      int i;
+      
+      // Light up a number of LEDs in the right color
+      for (i = 0; i < NUM_STRIP2_LEDS && i < numLeds; i++) {
+        strip2Leds[i] = CHSV(hue, 255, MAX_BRIGHTNESS);
+      }
+      
+      // The rest of the LEDs should be black
+      for (; i < NUM_STRIP2_LEDS; i++) {
+        strip2Leds[i] = CRGB::Black;
       }
       FastLED.show();
     }
