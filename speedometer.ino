@@ -1,14 +1,14 @@
 #include <FastLED.h>
 
 // Limit brightness of lights. Max is 255
-#define MAX_BRIGHTNESS          100
+#define MAX_BRIGHTNESS          30
 
 // Ring light info
 #define NUM_RING_LEDS 24
 #define RING_DATA_PIN 6
 
 // Strip light info
-#define NUM_STRIP_LEDS 120
+#define NUM_STRIP_LEDS 20
 #define STRIP_DATA_PIN 7
 
 // Current colors of lights
@@ -25,12 +25,12 @@ void setup() {
   FastLED.clear();
   FastLED.show();
 
-  // Reset all lights to black
+  // Reset all lights to white
   for (int i = 0; i < NUM_RING_LEDS; i++) {
-    ringLeds[i] = CRGB::Black;
+    ringLeds[i] = CRGB::White;
   }
   for (int i = 0; i < NUM_STRIP_LEDS; i++) {
-    stripLeds[i] = CRGB::Black;
+    stripLeds[i] = CRGB::White;
   }
   
   FastLED.show();
