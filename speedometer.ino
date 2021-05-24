@@ -1,7 +1,8 @@
 #include <FastLED.h>
 
 // Limit brightness of lights. Max is 255
-#define MAX_BRIGHTNESS          30
+#define DISPLAY_BRIGHTNESS 50
+#define UNDERGLOW_BRIGHTNESS 255
 
 // Ring light info
 #define NUM_RING_LEDS 24
@@ -15,31 +16,40 @@
 #define NUM_STRIP2_LEDS 20
 #define STRIP2_DATA_PIN 8
 
+// Underglow light info
+#define NUM_UNDERGLOW_LEDS 180
+#define UNDERGLOW_DATA_PIN 9
+
 // Current colors of lights
 CRGB ringLeds[NUM_RING_LEDS];
 CRGB stripLeds[NUM_STRIP_LEDS];
-CRGB strip2Leds[NUM_STRIP_LEDS];
+CRGB strip2Leds[NUM_STRIP2_LEDS];
+CRGB underglowLeds[NUM_UNDERGLOW_LEDS];
 
 void setup() {
   Serial.begin(9600);
   
-  FastLED.setBrightness(MAX_BRIGHTNESS);
-  FastLED.setMaxPowerInVoltsAndMilliamps(5, 2000); // Set max amps to 2 amps (2000 milliamps) at 5 volts
+  //FastLED.setBrightness(MAX_BRIGHTNESS);
+  //FastLED.setMaxPowerInVoltsAndMilliamps(5, 2000); // Set max amps to 2 amps (2000 milliamps) at 5 volts
   FastLED.addLeds<NEOPIXEL, RING_DATA_PIN>(ringLeds, NUM_RING_LEDS);
   FastLED.addLeds<NEOPIXEL, STRIP_DATA_PIN>(stripLeds, NUM_STRIP_LEDS);
   FastLED.addLeds<NEOPIXEL, STRIP2_DATA_PIN>(strip2Leds, NUM_STRIP2_LEDS);
+  FastLED.addLeds<NEOPIXEL, UNDERGLOW_DATA_PIN>(underglowLeds, NUM_UNDERGLOW_LEDS);
   FastLED.clear();
   FastLED.show();
 
   // Reset all lights to white
   for (int i = 0; i < NUM_RING_LEDS; i++) {
-    ringLeds[i] = CRGB::White;
+    ringLeds[i] = CHSV(0, 0, DISPLAY_BRIGHTNESS);
   }
   for (int i = 0; i < NUM_STRIP_LEDS; i++) {
-    stripLeds[i] = CRGB::White;
+    stripLeds[i] = CHSV(0, 0, DISPLAY_BRIGHTNESS);
   }
   for (int i = 0; i < NUM_STRIP2_LEDS; i++) {
-    strip2Leds[i] = CRGB::White;
+    strip2Leds[i] = CHSV(0, 0, DISPLAY_BRIGHTNESS);
+  }
+  for (int i = 0; i < NUM_UNDERGLOW_LEDS; i++) {
+    underglowLeds[i] = CHSV(0, 0, UNDERGLOW_BRIGHTNESS);
   }
   
   FastLED.show();
@@ -85,7 +95,7 @@ void serialEvent() {
 
       // Light up a number of LEDs in the right color
       for (i = 0; i < NUM_RING_LEDS && i < numLeds; i++) {
-        ringLeds[i] = CHSV(hue, 255, MAX_BRIGHTNESS);
+        ringLeds[i] = CHSV(hue, 255, DISPLAY_BRIGHTNESS);
       }
 
       // The rest of the LEDs should be black
@@ -107,7 +117,7 @@ void serialEvent() {
       
       // Light up a number of LEDs in the right color
       for (i = 0; i < NUM_STRIP_LEDS && i < numLeds; i++) {
-        stripLeds[i] = CHSV(hue, 255, MAX_BRIGHTNESS);
+        stripLeds[i] = CHSV(hue, 255, DISPLAY_BRIGHTNESS);
       }
       
       // The rest of the LEDs should be black
@@ -129,7 +139,7 @@ void serialEvent() {
       
       // Light up a number of LEDs in the right color
       for (i = 0; i < NUM_STRIP2_LEDS && i < numLeds; i++) {
-        strip2Leds[i] = CHSV(hue, 255, MAX_BRIGHTNESS);
+        strip2Leds[i] = CHSV(hue, 255, DISPLAY_BRIGHTNESS);
       }
       
       // The rest of the LEDs should be black
