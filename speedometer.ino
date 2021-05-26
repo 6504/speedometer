@@ -26,6 +26,8 @@ CRGB stripLeds[NUM_STRIP_LEDS];
 CRGB strip2Leds[NUM_STRIP2_LEDS];
 CRGB underglowLeds[NUM_UNDERGLOW_LEDS];
 
+int boostDelay;
+
 void setup() {
   Serial.begin(9600);
   
@@ -51,13 +53,40 @@ void setup() {
   for (int i = 0; i < NUM_UNDERGLOW_LEDS; i++) {
     underglowLeds[i] = CHSV(0, 0, UNDERGLOW_BRIGHTNESS);
   }
+
+  boostDelay = 100;
   
   FastLED.show();
 }
 
 void loop()
 {
-  
+  for(int j = 0; j < 256; j++) {
+    for(int i = 0; i < NUM_UNDERGLOW_LEDS; i++) {
+      underglowLeds[i] = Scroll((i * 256 / NUM_UNDERGLOW_LEDS + j) % 256);      
+    } 
+
+    FastLED.show();
+    delay(boostDelay);    
+  } 
+}
+
+CRGB Scroll(int pos) {
+  CRGB color (0,0,0);
+  if(pos < 85) {
+    color.g = 0;
+    color.r = ((float)pos / 85.0f) * 255.0f;
+    color.b = 255 - color.r;
+  } else if(pos < 170) {
+    color.g = ((float)(pos - 85) / 85.0f) * 255.0f;
+    color.r = 255 - color.g;
+    color.b = 0;
+  } else if(pos < 256) {
+    color.b = ((float)(pos - 170) / 85.0f) * 255.0f;
+    color.g = 255 - color.b;
+    color.r = 1;
+  }
+  return color;
 }
 
 /* Listen for serial events from the USB connection
@@ -147,6 +176,10 @@ void serialEvent() {
         strip2Leds[i] = CRGB::Black;
       }
       FastLED.show();
+    } else if (cmdChar == 'u') {
+      boostDelay=100;
+    } else if (cmdChar == 'U') {
+      boostDelay=1;
     }
   }
 }
