@@ -53,6 +53,8 @@ void setup() {
   for (int i = 0; i < NUM_UNDERGLOW_LEDS; i++) {
     underglowLeds[i] = CHSV(0, 0, UNDERGLOW_BRIGHTNESS);
   }
+
+  boostDelay = 100;
   
   FastLED.show();
 }
@@ -65,7 +67,7 @@ void loop()
     } 
 
     FastLED.show();
-    delay(100);    
+    delay(boostDelay);    
   } 
 }
 
@@ -174,6 +176,10 @@ void serialEvent() {
         strip2Leds[i] = CRGB::Black;
       }
       FastLED.show();
+    } else if (cmdChar == 'u') {
+      boostDelay=100;
+    } else if (cmdChar == 'U') {
+      boostDelay=1;
     }
   }
 }
