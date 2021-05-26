@@ -185,7 +185,7 @@ void serialEvent() {
       boostDelay=100;
       colorSkip = 5;
     } else if (cmdChar == 'U') {
-      boostDelay=1;
+      boostDelay=5;
       colorSkip = 40;
     }
   }
