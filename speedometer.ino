@@ -27,6 +27,7 @@ CRGB strip2Leds[NUM_STRIP2_LEDS];
 CRGB underglowLeds[NUM_UNDERGLOW_LEDS];
 
 int boostDelay;
+int colorSkip;
 
 void setup() {
   Serial.begin(9600);
@@ -55,20 +56,24 @@ void setup() {
   }
 
   boostDelay = 100;
+  colorSkip = 5;
   
   FastLED.show();
 }
 
+
+int j = 0;
+
 void loop()
 {
-  for(int j = 0; j < 256; j++) {
-    for(int i = 0; i < NUM_UNDERGLOW_LEDS; i++) {
-      underglowLeds[i] = Scroll((i * 256 / NUM_UNDERGLOW_LEDS + j) % 256);      
-    } 
-
-    FastLED.show();
-    delay(boostDelay);    
+  // Recalculate colors for underglow
+  for(int i = 0; i < NUM_UNDERGLOW_LEDS; i++) {
+    underglowLeds[i] = Scroll((i * 256 / NUM_UNDERGLOW_LEDS + j) % 256);      
   } 
+
+  FastLED.show();
+  delay(boostDelay);
+  j+=colorSkip;
 }
 
 CRGB Scroll(int pos) {
@@ -178,8 +183,10 @@ void serialEvent() {
       FastLED.show();
     } else if (cmdChar == 'u') {
       boostDelay=100;
+      colorSkip = 5;
     } else if (cmdChar == 'U') {
       boostDelay=1;
+      colorSkip = 40;
     }
   }
 }
